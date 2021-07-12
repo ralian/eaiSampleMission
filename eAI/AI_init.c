@@ -64,5 +64,6 @@ modded class CustomMission
 	void StartingEquipSetup(PlayerBase player, bool clothesChosen)
 	{
 		m_eaiGame.GetGroupByLeader(player);
+		super.StartingEquipSetup(player, clothesChosen);
 	}
 };
