@@ -59,8 +59,6 @@ void InitDynamicPatrols() {
 		patrols.Insert(pat);
 		pat.UpdateTriggers();
 	}
-	
-	Print("Enfusion AI Dynamic Patrols Loaded!");
 }
 
 void SpawnSentry(vector pos, string loadout = "SoldierLoadout.json") {
