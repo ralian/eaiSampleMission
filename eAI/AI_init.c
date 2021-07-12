@@ -34,8 +34,15 @@ ref array<array<vector>> patrol_list = {patrol_1, patrol_2, patrol_3, patrol_4, 
 // IMPORTANT: If you add an entry to the above list, pick the loadout for it by adding the loadout filename to this list
 ref array<string> patrol_loadouts = {"HumanLoadout.json", "HumanLoadout.json", "HumanLoadout.json", "HumanLoadout.json", "HumanLoadout.json", "HumanLoadout.json", "HumanLoadout.json", "HumanLoadout.json", "HumanLoadout.json", "HumanLoadout.json"};
 
+/// Array for ammount of ai per patrol, IMPORTANT: same as patrol_loadoats if you add an entry to the patrol_list add an entry to this array too!
+/// You can either either use MIN_NUMBER_PER_PATROL, a fixed value "8" or RandomAIAmmount()
+/// Alternitively if you give RandomAIAmmount() a min and max value it will use those instead of the values set below,
+/// this is useful when you wish to choose per mission/area EG: RandomAIAmmount(10,20)
+ref array<int> patrol_aiAmmount = {MIN_NUMBER_PER_PATROL, MIN_NUMBER_PER_PATROL, MIN_NUMBER_PER_PATROL, MIN_NUMBER_PER_PATROL, MIN_NUMBER_PER_PATROL, MIN_NUMBER_PER_PATROL, MIN_NUMBER_PER_PATROL, RandomAIAmmount(), RandomAIAmmount(), RandomAIAmmount(10, 20)};
+
 // you may change these quantities
-const int NUMBER_PER_PATROL = 2;	// Number of AI per patrol
+const int MIN_NUMBER_PER_PATROL = 2;// Min Number of AI per patrol
+const int MAX_NUMBER_PER_PATROL = 8;// Max Number of AI per patrol
 const int MAXR = 800;				// This is the main spawn radius- how close a player needs to be to spawn them in.
 const int MINR = 250;				// If a player is this close to the patrol start point, it is too close for them to spawn
 const int DESPAWNR = 1000;			// If all players are this far away, they despawn.
@@ -48,7 +55,7 @@ void InitDynamicPatrols() {
 	for (int i = 0; i < patrol_list.Count(); i++) {
 		string loadout = "SoldierLoadout.json"; // default
 		if (i < patrol_loadouts.Count()) loadout = patrol_loadouts[i];
-		autoptr eAIDynamicPatrol pat = new eAIDynamicPatrol(patrol_list[i][0], patrol_list[i], loadout, NUMBER_PER_PATROL, MINR, MAXR, DESPAWNR, RESPAWN_SECONDS);
+		autoptr eAIDynamicPatrol pat = new eAIDynamicPatrol(patrol_list[i][0], patrol_list[i], loadout, patrol_aiAmmount[i], MINR, MAXR, DESPAWNR, RESPAWN_SECONDS);
 		patrols.Insert(pat);
 		pat.UpdateTriggers();
 	}
@@ -57,6 +64,16 @@ void InitDynamicPatrols() {
 void SpawnSentry(vector pos, string loadout = "SoldierLoadout.json") {
 	eAIGame game = MissionServer.Cast(GetGame().GetMission()).GetEAIGame();
 	eAIBase ai = game.SpawnAI_Sentry(pos, loadout);
+}
+
+int RandomAIAmmount() 
+{
+	return Math.RandomInt(MIN_NUMBER_PER_PATROL, MAX_NUMBER_PER_PATROL + 1);
+}
+
+int RandomAIAmmount(int a, int b) 
+{
+	return Math.RandomInt(a, b + 1);
 }
 
 modded class CustomMission
