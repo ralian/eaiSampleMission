@@ -45,7 +45,6 @@ void main()
 
 class CustomMission: MissionServer
 {
-	
 	void SetRandomHealth(EntityAI itemEnt)
 	{
 		if ( itemEnt )
@@ -64,6 +63,47 @@ class CustomMission: MissionServer
 		GetGame().SelectPlayer( identity, m_player );
 
 		return m_player;
+	}
+
+	override void StartingEquipSetup(PlayerBase player, bool clothesChosen)
+	{
+		EntityAI itemClothing;
+		EntityAI itemEnt;
+		ItemBase itemBs;
+		float rand;
+
+		itemClothing = player.FindAttachmentBySlotName( "Body" );
+		if ( itemClothing )
+		{
+			SetRandomHealth( itemClothing );
+			
+			itemEnt = itemClothing.GetInventory().CreateInInventory( "BandageDressing" );
+			if ( Class.CastTo( itemBs, itemEnt ) )
+				itemBs.SetQuantity( 2 );
+
+			SetRandomHealth( itemEnt );
+
+			string chemlightArray[] = { "Chemlight_White", "Chemlight_Yellow", "Chemlight_Green", "Chemlight_Red" };
+			int rndIndex = Math.RandomInt( 0, 4 );
+			itemEnt = itemClothing.GetInventory().CreateInInventory( chemlightArray[rndIndex] );
+			SetRandomHealth( itemEnt );
+
+			rand = Math.RandomFloatInclusive( 0.0, 1.0 );
+			if ( rand < 0.35 )
+				itemEnt = player.GetInventory().CreateInInventory( "Apple" );
+			else if ( rand > 0.65 )
+				itemEnt = player.GetInventory().CreateInInventory( "Pear" );
+			else
+				itemEnt = player.GetInventory().CreateInInventory( "Plum" );
+
+			SetRandomHealth( itemEnt );
+		}
+		
+		itemClothing = player.FindAttachmentBySlotName( "Legs" );
+		if ( itemClothing )
+			SetRandomHealth( itemClothing );
+		
+		itemClothing = player.FindAttachmentBySlotName( "Feet" );
 	}
 };
 
